@@ -589,11 +589,6 @@ public class Map {
 		bordersSprite.setZIndex(-1000);
 		mScene.sortChildren();
 
-		/*Filter filter=new Filter();
-		filter.categoryBits=0x00000003;
-		filter.maskBits=    0xFFFFFFFF;
-		for (int i=0;i<bordersBody.getFixtureList().size();i++) bordersBody.getFixtureList().get(i).setFilterData(filter);*/
-
 		if (userShip==0) {
 			new Ship_1b1f2l2r(context, mEngine, mPhysicsWorld, mScene, false, false, 300, 850, 0, 20, 20, 20, 20, 40, 40, 4f, 4f, 4f, 4f, 4f, 4f);
 		} else if (userShip==1) {

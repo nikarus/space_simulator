@@ -71,12 +71,6 @@ public class Weapon extends ShipPart {
 	}
 
 	public Missile obtainShell() {
-		/*for (Missile m:mShells) {// Couldn't do this optimization for rocket luncher. Got problems with setting its position. Left it for now.
-			if (m.mIsMissileDetonated) {
-				m.resetMissileParameters(mShellShiftX, mShellShiftY, mRotation);
-				return m;
-			}
-		}*/
 		Missile m = new Missile(sContext, mShip, this, mShellShiftX, mShellShiftY, mRotation, mWeaponForce, mIsRocketLauncher, mShellMass, mReloadTime, mStrength, mShipBody, mShipBodySprite, mShellVertices, mScene, mPhysicsWorld, mShellFireTextureRegion, mShellFireShiftX, mShellFireShiftY, mShellFireScale, mShellTextureRegion, mShellFixtureDef);
 		mShells.add(m);
 		Log.i("info", "SHELL ADDED. SIZE: "+mShells.size());
@@ -104,72 +98,9 @@ public class Weapon extends ShipPart {
 
 		if (mWeaponIsShooting) {
 			if (mIsLoaded) {
-				double k = Math.tan(mShip.mWeapon.get(0).mBody.getAngle()+Math.PI/2);
-
-				Vector2 weaponPosition = mShip.mWeapon.get(0).mBody.getWorldCenter();
-				//EQUATION ONE:
-				//kX + (-1)Y + k*weaponPosition.x+weaponPosition.y = 0
-				Vector2 enemyPosition = null;
-				Vector2 enemySpeed = null;
-				Vector2 enemySpeedLocal = null;
-				for (Ship ship: Ship.mShips) {
-					if (ship.mTrainingBoxID==mShip.mTrainingBoxID && ship!=mShip) {
-						enemyPosition = ship.mShipBody.getWorldCenter();
-						enemySpeedLocal = ship.mShipBody.getLinearVelocity();
-						enemySpeed = new Vector2();
-						enemySpeed.x = enemyPosition.x+enemySpeedLocal.x;
-						enemySpeed.y = enemyPosition.y+enemySpeedLocal.y;
-					}
-				}
-
-
-
-				//EQUATION TWO:
-				//(enemySpeed.y-enemyPosition.y)X+(enemyPosition.x-enemySpeed.x)Y+(enemySpeed.x*enemyPosition.y-enemyPosition.x*enemySpeed.y) = 0
-
-				//Intersection equation:
-				//x = (b1*c2-b2*c1)/(a1*b2-a2*b2)
-				//y = (a2*c1-a1*c2)/(a1*b2-a2*b1)
-
-				double a1 = k;
-				double a2 = (enemySpeed.y-enemyPosition.y);
-				double b1 = -1;
-				double b2 = (enemyPosition.x-enemySpeed.x);
-				double c1 = -k*weaponPosition.x+weaponPosition.y;
-				double c2 = (enemySpeed.x*enemyPosition.y-enemyPosition.x*enemySpeed.y);
-
-				Vector2 intersection = new Vector2();
-				intersection.x = (float) ((b1*c2-b2*c1)/(a1*b2-a2*b2));
-				intersection.y = (float) ((a2*c1-a1*c2)/(a1*b2-a2*b1));
-
-				/*Log.i("info", "k: "+k+" angle: "+Ship.weapon.get(0).body.getAngle()+Math.PI/2);
-				Log.i("info", "wX = " + weaponPosition.x + " wY = "+ weaponPosition.y);
-				Log.i("info", "eX = " + enemyPosition.x + " eY = "+ enemyPosition.y);
-				Log.i("info", "esX = " + enemySpeed.x + " esY = "+ enemySpeed.y);
-				Log.i("info", "iX = " + intersection.x + " iY = "+ intersection.y);*/
-
-				double current_intersection_distance = mShip.mWeapon.get(0).mBody.getWorldCenter().dst(intersection);
-				double enemy_intersection_distance = enemyPosition.dst(intersection);
-
-				double missileSpeed = (mLoadedShell.mEngineForce/mLoadedShell.mMissileMass)/15;
-				double enemyScalarSpeed = enemySpeed.len();
-
-				double missileTime = current_intersection_distance/missileSpeed;
-				double enemyTime = enemy_intersection_distance/enemyScalarSpeed;
-
-				if (mShip==(Ship.mShips.get(Ship.sHumanControlledIndex)))
-						{
-					//Log.i("info", "current_intersection_distance = " + current_intersection_distance + " enemy_intersection_distance = "+ enemy_intersection_distance);
-					//Log.i("info", "missileSpeed = " + missileSpeed + " enemyScalarSpeed = "+ enemyScalarSpeed);
-					//Log.i("info", "missileTime = " + missileTime + " enemyTime = "+ enemyTime);
-
-					if (Math.abs(missileTime-enemyTime)<0.5) {
-						//Log.i("info", "HIT HIT HIT!!!");
-						//Ship.fitness = Ship.fitness+1;
-					}
-
+				if (mShip==(Ship.mShips.get(Ship.sHumanControlledIndex))) {
 					mLoadedShell.shoot();
-						}
+				}
 				mShootTime=System.currentTimeMillis();
 				mIsLoaded=false;
 			}
